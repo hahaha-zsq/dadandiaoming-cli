@@ -7,6 +7,7 @@ import {version} from "../package.json";
 import {Command} from 'commander';
 import {create} from "./command/create";
 import {update} from "./command/update";
+import {pkg} from "./command/package";
 
 // 创建命令行程序实例
 const program = new Command('dadandiaoming');
@@ -29,6 +30,14 @@ program
     .action(async (name) => {
        await create(name)
     });
+
+program
+   .command('package')
+   .alias('pkg')
+   .description('选择全局安装包管理工具')
+   .action(async() => {
+    await pkg()
+    }); 
 
 // 解析命令行参数
 program.parse(process.argv);
