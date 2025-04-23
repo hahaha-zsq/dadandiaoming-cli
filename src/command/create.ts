@@ -37,7 +37,7 @@ export const templateList: Map<string, TemplateInfo> = new Map(
 export const checkVersion = async (name:string,version:string) => {
     try {
         // 获取最新版本信息
-        const response = await fetch(`https://registry.npmjs.org/${name}/latest`);
+        const response = await fetch(`https://registry.npmjs.org/${name}`);
         const data = await response.json();
         const latestVersion = data["dist-tags"].latest;
         

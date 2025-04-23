@@ -17,7 +17,7 @@ export const update = async () => {
     
     try {
         // 从 npm 仓库获取最新版本信息
-        const response = await fetch(`https://registry.npmjs.org/${name}/latest`);
+        const response = await fetch(`https://registry.npmjs.org/${name}`);
         const data = await response.json();
         const latestVersion = data["dist-tags"].latest;
         

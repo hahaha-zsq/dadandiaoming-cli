@@ -96,7 +96,7 @@ export const clone = async (url: string, projectName: string, options: string[])
 
         // 添加使用提示信息
         console.log(chalk.bold('🚀 开始使用：'));
-        console.log(chalk.green(`   cd ${projectName}`));
+        console.log(chalk.green(`   cd ${targetDir}`));
         console.log(chalk.green('   npm install') + chalk.gray(' (或 pnpm)'));
         console.log(chalk.green('   npm run dev') + chalk.gray(' (或 pnpm dev)\n'));
 
