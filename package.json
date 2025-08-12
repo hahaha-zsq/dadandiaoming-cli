@@ -1,6 +1,6 @@
 {
   "name": "dadandiaoming-cli",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "一个脚手架工具 包含vue、react两种",
   "main": "index.js",
   "type": "module",
