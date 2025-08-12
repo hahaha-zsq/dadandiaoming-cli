@@ -1,0 +1,50 @@
+name: Publish And Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      # Step1: 检出源码
+      - name: Checkout
+        # 使用的第三方action名称，其实是仓库地址的缩写，省略了github.com/前缀，完整是https://github.com/actions/checkout/tree/v4/
+        uses: actions/checkout@v4
+
+      # Step2: 安装Nodejs环境
+      - name: Setup nodejs and build package
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # 设置要发布到哪个npm镜像仓库，这里指向npmjs
+          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
+
+      # Step3：安装依赖
+      - run: npm ci
+
+      # Step4：打包
+      - run: npm run build
+
+      # Step5：发布到npmjs
+      - name: Publish to npmjs
+        # 这里用了带scope的包名防止和其他公共包冲突，因此需要加上--access public
+        run: npm publish --access public
+        env:
+          # 这里环境变量写配置在仓库secret的npm access token的名字
+          NODE_AUTH_TOKEN: ${{secrets.NPM}}
+
+      # Step6：将构建目录压缩成一个文件，用于release附件
+      - run: tar -zcvf release.tgz ./dist/
+
+      # Step7: 发布release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # 这里环境变量写配置在仓库secret的GitHub Personal access token的名字
+          token: ${{ secrets.HUB_TOKEN }}
+          name: ${{ github.ref }}
+          files: ./release.tgz
+          draft: false

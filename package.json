@@ -1,12 +1,22 @@
 {
   "name": "dadandiaoming-cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "一个脚手架工具 包含vue、react两种",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js --watch",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run build",
+    "version:patch": "scripts/update-version.sh patch",
+    "version:minor": "scripts/update-version.sh minor",
+    "version:major": "scripts/update-version.sh major",
+    "version:check": "npm outdated",
+    "lint": "echo 'Linting...' && echo 'No linter configured'",
+    "format": "echo 'Formatting...' && echo 'No formatter configured'"
   },
   "keywords": [
     "脚手架",
