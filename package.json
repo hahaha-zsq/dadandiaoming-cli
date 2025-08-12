@@ -1,9 +1,10 @@
 {
   "name": "dadandiaoming-cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "一个脚手架工具 包含vue、react两种",
   "main": "index.js",
   "type": "module",
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c rollup.config.js",
