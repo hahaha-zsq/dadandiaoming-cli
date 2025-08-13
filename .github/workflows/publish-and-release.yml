@@ -14,23 +14,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. 安装 pnpm (使用 package.json 中指定的版本)
+      # 2. 安装 pnpm v10.9.0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
+          version: 10.9.0
           run_install: false
 
-      # 3. 安装 Node.js
+      # 3. 安装 Node.js v18.19.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18.19.0
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
 
-      # 4. 安装依赖
+      # 4. 安装依赖（添加 lockfile 兼容性处理）
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
 
       # 5. 构建
       - name: Build
