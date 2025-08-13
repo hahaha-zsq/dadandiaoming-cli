@@ -1,4 +1,5 @@
-name: Publish And Release
+name: Publish to npm & GitHub Release
+
 on:
   push:
     tags:
@@ -7,44 +8,49 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+
     steps:
-      # Step1: 检出源码
+      # 1. 检出代码
       - name: Checkout
-        # 使用的第三方action名称，其实是仓库地址的缩写，省略了github.com/前缀，完整是https://github.com/actions/checkout/tree/v4/
         uses: actions/checkout@v4
 
-      # Step2: 安装Nodejs环境
-      - name: Setup nodejs and build package
+      # 2. 安装 pnpm (使用 package.json 中指定的版本)
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      # 3. 安装 Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # 设置要发布到哪个npm镜像仓库，这里指向npmjs
           registry-url: https://registry.npmjs.org/
-          cache: 'npm'
+          cache: 'pnpm'
 
-      # Step3：安装依赖
-      - run: npm ci
+      # 4. 安装依赖
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # Step4：打包
-      - run: npm run build
+      # 5. 构建
+      - name: Build
+        run: pnpm build
 
-      # Step5：发布到npmjs
-      - name: Publish to npmjs
-        # 这里用了带scope的包名防止和其他公共包冲突，因此需要加上--access public
-        run: npm publish --access public
+      # 6. 发布到 npm
+      - name: Publish to npm
+        run: pnpm publish --no-git-checks --access public
         env:
-          # 这里环境变量写配置在仓库secret的npm access token的名字
-          NODE_AUTH_TOKEN: ${{secrets.NPM}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM }}
 
-      # Step6：将构建目录压缩成一个文件，用于release附件
-      - run: tar -zcvf release.tgz ./dist/
-
-      # Step7: 发布release
-      - name: Release
+      # 7. 创建 GitHub Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          # 这里环境变量写配置在仓库secret的GitHub Personal access token的名字
-          token: ${{ secrets.HUB_TOKEN }}
-          name: ${{ github.ref }}
-          files: ./release.tgz
-          draft: false
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 变更日志
+            - 自动发布 npm 包 v${{ github.ref_name }}
+            - 构建时间: ${{ github.run_number }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.HUB_TOKEN }}
